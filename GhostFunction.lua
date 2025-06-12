@@ -7,17 +7,38 @@ if not actionbind then
     return
 end
 
--- DeleteTool: Creates a tool to delete clicked objects
+-- DeleteTool: Creates a tool for serverside deletion
 function Commands.DeleteTool()
+    local player = game.Players.LocalPlayer
     local tool = Instance.new("Tool")
     tool.Name = "GHOSTDeleteTool"
     tool.RequiresHandle = false
-    tool.Parent = game.Players.LocalPlayer.Backpack
+    tool.Parent = player.Backpack
+
+    -- Create RemoteFunction for serverside deletion
+    local remoteFunc = Instance.new("RemoteFunction")
+    remoteFunc.Name = "GHOSTDeleteRemote"
+    remoteFunc.Parent = game.ReplicatedStorage
+
+    -- Handle tool activation
     tool.Activated:Connect(function()
-        local mouse = game.Players.LocalPlayer:GetMouse()
+        local mouse = player:GetMouse()
         local target = mouse.Target
-        if target and target:IsA("BasePart") or target:IsA("Model") then
+        if target and (target:IsA("BasePart") or target:IsA("Model")) then
+            -- Fire backdoor remote to delete target
             actionbind:Fire(target)
+        end
+    end)
+
+    -- Cleanup RemoteFunction when tool is unequipped or destroyed
+    tool.Unequipped:Connect(function()
+        if remoteFunc then
+            remoteFunc:Destroy()
+        end
+    end)
+    tool.Destroying:Connect(function()
+        if remoteFunc then
+            remoteFunc:Destroy()
         end
     end)
 end
@@ -44,7 +65,7 @@ function Commands.KickPlayer(target)
     end
 end
 
--- FlyPlayer: Enables smooth flight
+-- FlyPlayer: Full-directional flight
 function Commands.FlyPlayer()
     local player = game.Players.LocalPlayer
     local character = player.Character
@@ -71,7 +92,6 @@ function Commands.FlyPlayer()
     bodyGyro.Parent = root
 
     humanoid.PlatformStand = true
-
     local speed = 50
     local connection
     connection = game:GetService("RunService").RenderStepped:Connect(function()
@@ -107,6 +127,8 @@ function Commands.FlyPlayer()
     humanoid.Died:Connect(function()
         connection:Disconnect()
         humanoid.PlatformStand = false
+        bodyVelocity:Destroy()
+        bodyGyro:Destroy()
     end)
 end
 
