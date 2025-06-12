@@ -303,7 +303,7 @@ MainFrame.Position = UDim2.new(0.5, 0, 1.5, 0)
 TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
 
 -- Optional Dragging Script (Uncomment to enable)
---[[
+
 local UIDrag = Instance.new("LocalScript")
 UIDrag.Name = "UIDrag"
 UIDrag.Parent = MainFrame
@@ -343,4 +343,4 @@ UIDrag.Source = [[
         end
     end)
 ]]
---]]
+
