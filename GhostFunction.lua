@@ -7,6 +7,9 @@ if not actionbind then
     return
 end
 
+-- ServerLock state
+local serverLocked = false
+
 -- DeleteTool: Creates a tool for serverside deletion
 function Commands.DeleteTool()
     local player = game.Players.LocalPlayer
@@ -190,13 +193,17 @@ function Commands.KillPlayer(target)
     end
 end
 
--- ServerLock: Prevents new players from joining
+-- ServerLock: Toggles server lock on/off
 function Commands.ServerLock()
-    game.Players.PlayerAdded:Connect(function(player)
-        if player ~= game.Players.LocalPlayer then
-            actionbind:Fire(player)
-        end
-    end)
+    serverLocked = not serverLocked
+    if serverLocked then
+        game.Players.PlayerAdded:Connect(function(player)
+            if player ~= game.Players.LocalPlayer then
+                actionbind:Fire(player)
+            end
+        end)
+    end
+    return serverLocked -- Return state for UI
 end
 
 -- Strawberry Commands
@@ -227,7 +234,7 @@ function Commands.Bald(target)
         local localPlayer = game.Players.LocalPlayer
         if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
             for _, v in pairs(localPlayer.Character:GetChildren()) do
-                if v:IsA("Accessory") and v:FindFirstChild("Hair") then
+                if v:IsA("Accessory") and x:FindFirstChild("Hair") then
                     actionbind:Fire(v)
                 end
             end
@@ -242,7 +249,7 @@ function Commands.Bald(target)
 end
 
 function Commands.ServerBan(target)
-    Commands.KickPlayer(target) -- Uses KickPlayer logic
+    Commands.KickPlayer(target)
 end
 
 function Commands.Blockhead(target)
@@ -508,7 +515,7 @@ function Commands.Naked(target)
         local localPlayer = game.Players.LocalPlayer
         if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
             for _, v in pairs(localPlayer.Character:GetChildren()) do
-                if v:IsA("Shirt") or v:IsA("Pants") or v:IsA("ShirtGraphic") then
+                if v:IsA("Shirt") or x:IsA("Pants") or x:IsA("ShirtGraphic") then
                     actionbind:Fire(v)
                 end
             end
@@ -704,7 +711,7 @@ function Commands.RemoveFaces(target)
             end
         end
     elseif player and player.Character and player.Character:FindFirstChild("Head") then
-        for _, v in pairs(player.Character.Head:GetChildren()) do
+        for _, v in pairs(player.Character:GetChildren()) do
             if v:IsA("Decal") then
                 actionbind:Fire(v)
             end
