@@ -305,30 +305,35 @@ UIDrag.Name = "UIDrag"
 UIDrag.Parent = MainFrame
 UIDrag.Source = [[
     local frame = script.Parent
-    local dragging = false
-    local dragStartPos = nil
-    local frameStartPos = nil
+    local dragToggle = nil
+    local dragSpeed = 0.1
+    local dragStart = nil
+    local startPos = nil
+
+    local function updateInput(input)
+        local delta = input.Position - dragStart
+        local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        game:GetService("TweenService"):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
+    end
 
     frame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStartPos = input.Position
-            frameStartPos = frame.Position
+            dragToggle = true
+            dragStart = input.Position
+            startPos = frame.Position
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
+                    dragToggle = false
                 end
             end)
         end
     end)
 
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - dragStartPos
-            frame.Position = UDim2.new(
-                frameStartPos.X.Scale, frameStartPos.X.Offset + delta.X,
-                frameStartPos.Y.Scale, frameStartPos.Y.Offset + delta.Y
-            )
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            if dragToggle then
+                updateInput(input)
+            end
         end
     end)
 ]]
