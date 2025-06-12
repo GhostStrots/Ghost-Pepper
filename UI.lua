@@ -170,7 +170,7 @@ ScrollingFrame.BackgroundTransparency = 1
 ScrollingFrame.Parent = MainFrame
 
 -- Grid Layout
-local UIGridLayout = Instance.new("UIGradient")
+local UIGridLayout = Instance.new("UIGridLayout") -- Fixed: Changed from UIGradient to UIGridLayout
 UIGridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 UIGridLayout.CellSize = UDim2.new(1, -35, 0, 40)
 UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -319,38 +319,35 @@ DragScript.Parent = DragBar
 DragScript.Source = [[
     local dragBar = script.Parent
     local frame = dragBar.Parent
-    local player = game.Players.LocalPlayer
-    local mouse = player:GetMouse()
+    local UserInputService = game:GetService("UserInputService")
     
-    local isDragging = false
+    local dragging = false
+    local dragStart = nil
+    local startPos = nil
     
     dragBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            isDragging = true
-            local startPos = frame.Position
-            local startMouse = Vector2.new(mouse.X, mouse.Y)
-            
-            local connection
-            connection = game:GetService("RunService").RenderStepped:Connect(function()
-                if isDragging then
-                    local currentMouse = Vector2.new(mouse.X, mouse.Y)
-                    local delta = currentMouse - startMouse
-                    frame.Position = UDim2.new(
-                        startPos.X.Scale,
-                        startPos.X.Offset + delta.X,
-                        startPos.Y.Scale,
-                        startPos.Y.Offset + delta.Y
-                    )
-                else
-                    connection:Disconnect()
-                end
-            end)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
         end
     end)
     
     dragBar.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            isDragging = false
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
         end
     end)
 ]]
