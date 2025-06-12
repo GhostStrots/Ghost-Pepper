@@ -1,6 +1,5 @@
 local Commands = loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostStrots/Ghost-Pepper/refs/heads/main/GhostFunction.lua"))()
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
 
 -- Main GUI
 local ScreenGui = Instance.new("ScreenGui")
@@ -299,25 +298,32 @@ MainHandler.Source = [[
     script.Parent.ScrollingFrame.SubTitle.Text = script.Parent.ScrollingFrame.SubTitle.Text.." ("..tostring(commandcount).." commands loaded!)"
 ]]
 
--- Draggable Frame
+-- Load Animation
+MainFrame.Position = UDim2.new(0.5, 0, 1.5, 0)
+TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+
+-- Optional Dragging Script (Uncomment to enable)
+--[[
 local UIDrag = Instance.new("LocalScript")
 UIDrag.Name = "UIDrag"
 UIDrag.Parent = MainFrame
 UIDrag.Source = [[
+    local UIS = game:GetService('UserInputService')
     local frame = script.Parent
     local dragToggle = nil
-    local dragSpeed = 0.1
+    local dragSpeed = 0.25
     local dragStart = nil
     local startPos = nil
 
     local function updateInput(input)
         local delta = input.Position - dragStart
-        local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        game:GetService("TweenService"):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
+        local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        game:GetService('TweenService'):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
     end
 
     frame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
             dragToggle = true
             dragStart = input.Position
             startPos = frame.Position
@@ -329,7 +335,7 @@ UIDrag.Source = [[
         end
     end)
 
-    frame.InputChanged:Connect(function(input)
+    UIS.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             if dragToggle then
                 updateInput(input)
@@ -337,7 +343,4 @@ UIDrag.Source = [[
         end
     end)
 ]]
-
--- Load Animation
-MainFrame.Position = UDim2.new(0.5, 0, 1.5, 0)
-TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+--]]
