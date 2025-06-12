@@ -203,7 +203,165 @@ function Commands.ServerLock()
             end
         end)
     end
-    return serverLocked -- Return state for UI
+    return serverLocked
+end
+
+-- Leaderstats: Opens a submenu to view player's leaderstats
+function Commands.Leaderstats()
+    local player = game.Players.LocalPlayer
+    local leaderstats = player:FindFirstChild("leaderstats")
+    if not leaderstats then return end
+
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "GHOST_Leaderstats_UI"
+    gui.Parent = game.Players.LocalPlayer.PlayerGui
+    gui.ResetOnSpawn = false
+    gui.DisplayOrder = 1000000001
+    gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 250, 0, 300)
+    frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    frame.BackgroundTransparency = 0.75
+    frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    frame.BorderSizePixel = 0
+    frame.Parent = gui
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = frame
+
+    local shadow = Instance.new("ImageLabel")
+    shadow.SliceCenter = Rect.new(200, 200, 500, 500)
+    shadow.SliceScale = 0.095
+    shadow.ScaleType = Enum.ScaleType.Slice
+    shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.ImageColor3 = Color3.fromRGB(153, 153, 153)
+    shadow.Image = "http://www.roblox.com/asset/?id=13960012399"
+    shadow.Size = UDim2.new(1, 18, 1, 18)
+    shadow.BackgroundTransparency = 1
+    shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+    shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+    shadow.Name = "Shadow"
+    shadow.Parent = frame
+
+    local shadowGradient = Instance.new("UIGradient")
+    shadowGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+    shadowGradient.Parent = shadow
+
+    local gloss = Instance.new("ImageLabel")
+    gloss.ZIndex = -2147483647
+    gloss.BackgroundColor3 = Color3.fromRGB(67, 67, 67)
+    gloss.ImageTransparency = 0.1
+    gloss.ImageColor3 = Color3.fromRGB(153, 153, 153)
+    gloss.Image = "rbxassetid://413422291"
+    gloss.Size = UDim2.new(1, 0, 1, 0)
+    gloss.BackgroundTransparency = 1
+    gloss.AnchorPoint = Vector2.new(0.5, 0.5)
+    gloss.Position = UDim2.new(0.50333, 0, 0.5, 0)
+    gloss.Name = "Gloss"
+    gloss.Parent = frame
+
+    local glossCorner = Instance.new("UICorner")
+    glossCorner.CornerRadius = UDim.new(0, 10)
+    glossCorner.Parent = gloss
+
+    local glossGradient = Instance.new("UIGradient")
+    glossGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+    glossGradient.Parent = gloss
+
+    local frameGradient = Instance.new("UIGradient")
+    frameGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+    frameGradient.Parent = frame
+
+    local title = Instance.new("TextLabel")
+    title.TextWrapped = true
+    title.TextSize = 14
+    title.TextScaled = true
+    title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    title.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.BackgroundTransparency = 1
+    title.Size = UDim2.new(0, 165, 0, 33)
+    title.Text = "👻 Leaderstats"
+    title.Position = UDim2.new(0.22333, 0, 0.02, 0)
+    title.Parent = frame
+
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0, 30, 0, 30)
+    closeButton.Position = UDim2.new(1, -35, 0, 5)
+    closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    closeButton.BackgroundTransparency = 0.8
+    closeButton.Text = "X"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+    closeButton.TextSize = 18
+    closeButton.Parent = frame
+
+    local closeCorner = Instance.new("UICorner")
+    closeCorner.CornerRadius = UDim.new(0, 5)
+    closeCorner.Parent = closeButton
+
+    closeButton.MouseButton1Click:Connect(function()
+        gui:Destroy()
+    end)
+
+    local scrollingFrame = Instance.new("ScrollingFrame")
+    scrollingFrame.Active = true
+    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    scrollingFrame.BackgroundTransparency = 1
+    scrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    scrollingFrame.Size = UDim2.new(0, 229, 0, 254)
+    scrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(255, 50, 50)
+    scrollingFrame.Position = UDim2.new(0.50458, 0, 0.60286, 0)
+    scrollingFrame.ScrollBarThickness = 10
+    scrollingFrame.Parent = frame
+
+    local gridLayout = Instance.new("UIGridLayout")
+    gridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    gridLayout.CellSize = UDim2.new(1, -35, 0, 40)
+    gridLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    gridLayout.CellPadding = UDim2.new(0, 5, 0, 10)
+    gridLayout.Parent = scrollingFrame
+
+    for _, stat in ipairs(leaderstats:GetChildren()) do
+        if stat:IsA("IntValue") or stat:IsA("NumberValue") or stat:IsA("StringValue") then
+            local statLabel = Instance.new("TextLabel")
+            statLabel.Text = stat.Name .. ": " .. tostring(stat.Value)
+            statLabel.TextSize = 18
+            statLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            statLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            statLabel.BackgroundTransparency = 0.8
+            statLabel.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+            statLabel.Parent = scrollingFrame
+
+            local statCorner = Instance.new("UICorner")
+            statCorner.Parent = statLabel
+
+            local statShadow = Instance.new("ImageLabel")
+            statShadow.SliceCenter = Rect.new(200, 200, 500, 500)
+            statShadow.SliceScale = 0.1
+            statShadow.ScaleType = Enum.ScaleType.Slice
+            statShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            statShadow.ImageTransparency = 0.5
+            statShadow.Image = "http://www.roblox.com/asset/?id=13960012399"
+            statShadow.Size = UDim2.new(1, 18, 1, 18)
+            statShadow.BackgroundTransparency = 1
+            statShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+            statShadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+            statShadow.Name = "Shadow"
+            statShadow.Parent = statLabel
+
+            local statShadowGradient = Instance.new("UIGradient")
+            statShadowGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+            statShadowGradient.Parent = statShadow
+
+            stat:GetPropertyChangedSignal("Value"):Connect(function()
+                statLabel.Text = stat.Name .. ": " .. tostring(stat.Value)
+            end)
+        end
+    end
 end
 
 -- Strawberry Commands
@@ -234,7 +392,7 @@ function Commands.Bald(target)
         local localPlayer = game.Players.LocalPlayer
         if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
             for _, v in pairs(localPlayer.Character:GetChildren()) do
-                if v:IsA("Accessory") and x:FindFirstChild("Hair") then
+                if v:IsA("Accessory") and v:FindFirstChild("Hair") then
                     actionbind:Fire(v)
                 end
             end
@@ -515,7 +673,7 @@ function Commands.Naked(target)
         local localPlayer = game.Players.LocalPlayer
         if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
             for _, v in pairs(localPlayer.Character:GetChildren()) do
-                if v:IsA("Shirt") or x:IsA("Pants") or x:IsA("ShirtGraphic") then
+                if v:IsA("Shirt") or v:IsA("Pants") or v:IsA("ShirtGraphic") then
                     actionbind:Fire(v)
                 end
             end
