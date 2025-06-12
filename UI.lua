@@ -7,219 +7,310 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "GHOST_PEPPER_UI"
 ScreenGui.Parent = game.Players.LocalPlayer.PlayerGui
 ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 1000000000
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 -- Main Frame
-local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 450, 0, 350)
-Frame.Position = UDim2.new(0.5, -225, 0.5, -175)
-Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Frame.BorderSizePixel = 0
-Frame.ClipsDescendants = true
-Frame.Parent = ScreenGui
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 300, 0, 350)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BackgroundTransparency = 0.75
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.BorderSizePixel = 0
+MainFrame.Parent = ScreenGui
+
+-- UICorner
 local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(0, 10)
-UICorner.Parent = Frame
-local UIStroke = Instance.new("UIStroke")
-UIStroke.Color = Color3.fromRGB(255, 50, 50)
-UIStroke.Thickness = 2
-UIStroke.Parent = Frame
+UICorner.Parent = MainFrame
 
--- Title Bar
-local TitleBar = Instance.new("Frame")
-TitleBar.Size = UDim2.new(1, 0, 0, 40)
-TitleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-TitleBar.BorderSizePixel = 0
-TitleBar.Parent = Frame
+-- Shadow
+local Shadow = Instance.new("ImageLabel")
+Shadow.SliceCenter = Rect.new(200, 200, 500, 500)
+Shadow.SliceScale = 0.095
+Shadow.ScaleType = Enum.ScaleType.Slice
+Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Shadow.ImageColor3 = Color3.fromRGB(153, 153, 153)
+Shadow.Image = "http://www.roblox.com/asset/?id=13960012399"
+Shadow.Size = UDim2.new(1, 18, 1, 18)
+Shadow.BackgroundTransparency = 1
+Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+Shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+Shadow.Name = "Shadow"
+Shadow.Parent = MainFrame
+
+-- Shadow Gradient
+local ShadowGradient = Instance.new("UIGradient")
+ShadowGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+ShadowGradient.Parent = Shadow
+
+-- Gloss
+local Gloss = Instance.new("ImageLabel")
+Gloss.ZIndex = -2147483647
+Gloss.BackgroundColor3 = Color3.fromRGB(67, 67, 67)
+Gloss.ImageTransparency = 0.1
+Gloss.ImageColor3 = Color3.fromRGB(153, 153, 153)
+Gloss.Image = "rbxassetid://413422291"
+Gloss.Size = UDim2.new(1, 0, 1, 0)
+Gloss.BackgroundTransparency = 1
+Gloss.AnchorPoint = Vector2.new(0.5, 0.5)
+Gloss.Position = UDim2.new(0.50333, 0, 0.5, 0)
+Gloss.Name = "Gloss"
+Gloss.Parent = MainFrame
+
+-- Gloss UICorner
+local GlossCorner = Instance.new("UICorner")
+GlossCorner.CornerRadius = UDim.new(0, 10)
+GlossCorner.Parent = Gloss
+
+-- Gloss Gradient
+local GlossGradient = Instance.new("UIGradient")
+GlossGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+GlossGradient.Parent = Gloss
+
+-- Frame Gradient
+local FrameGradient = Instance.new("UIGradient")
+FrameGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+FrameGradient.Parent = MainFrame
+
+-- Title
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, -40, 1, 0)
-Title.Position = UDim2.new(0, 10, 0, 0)
+Title.TextWrapped = true
+Title.TextSize = 14
+Title.TextScaled = true
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.BackgroundTransparency = 1
-Title.Text = "GHOST PEPPER by GHOST"
-Title.TextColor3 = Color3.fromRGB(255, 50, 50)
-Title.TextSize = 20
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.Parent = TitleBar
-local CloseButton = Instance.new("TextButton")
-CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Position = UDim2.new(1, -35, 0, 5)
-CloseButton.BackgroundTransparency = 1
-CloseButton.Text = "X"
-CloseButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-CloseButton.TextSize = 16
-CloseButton.Parent = TitleBar
-CloseButton.MouseButton1Click:Connect(function()
-    Frame:TweenPosition(UDim2.new(0.5, -225, 1.5, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
-    wait(0.5)
-    ScreenGui:Destroy()
+Title.Size = UDim2.new(0, 165, 0, 33)
+Title.Text = "👻 GHOST PEPPER v1.0 (FE)"
+Title.Name = "Title"
+Title.Position = UDim2.new(0.22333, 0, 0.02, 0)
+Title.Parent = MainFrame
+
+-- Username Input
+local Username = Instance.new("TextBox")
+Username.Name = "Username"
+Username.TextSize = 18
+Username.TextColor3 = Color3.fromRGB(255, 255, 255)
+Username.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Username.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+Username.AnchorPoint = Vector2.new(0.5, 0.5)
+Username.PlaceholderText = "Username (all, others, me)"
+Username.Size = UDim2.new(0, 183, 0, 30)
+Username.Position = UDim2.new(0.44667, 0, 0, 60)
+Username.Text = ""
+Username.BackgroundTransparency = 1
+Username.Parent = MainFrame
+
+-- Username Background
+local UsernameBG = Instance.new("Frame")
+UsernameBG.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+UsernameBG.Size = UDim2.new(1, 0, 1, 0)
+UsernameBG.Name = "BG"
+UsernameBG.BackgroundTransparency = 0.5
+UsernameBG.Parent = Username
+
+-- Username Shadow
+local UsernameShadow = Instance.new("ImageLabel")
+UsernameShadow.SliceCenter = Rect.new(200, 200, 500, 500)
+UsernameShadow.SliceScale = 0.1
+UsernameShadow.ScaleType = Enum.ScaleType.Slice
+UsernameShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+UsernameShadow.ImageTransparency = 0.5
+UsernameShadow.Image = "http://www.roblox.com/asset/?id=13960012399"
+UsernameShadow.Size = UDim2.new(1, 18, 1, 18)
+UsernameShadow.BackgroundTransparency = 1
+UsernameShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+UsernameShadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+UsernameShadow.Name = "Shadow"
+UsernameShadow.Parent = UsernameBG
+
+-- Username Shadow Gradient
+local UsernameShadowGradient = Instance.new("UIGradient")
+UsernameShadowGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+UsernameShadowGradient.Parent = UsernameShadow
+
+-- Username Background UICorner
+local UsernameBGCorner = Instance.new("UICorner")
+UsernameBGCorner.CornerRadius = UDim.new(0, 10)
+UsernameBGCorner.Parent = UsernameBG
+
+-- Username Background Gradient
+local UsernameBGGradient = Instance.new("UIGradient")
+UsernameBGGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+UsernameBGGradient.Parent = UsernameBG
+
+-- Username Animation
+local UsernameAnim = Instance.new("LocalScript")
+UsernameAnim.Name = "Anim"
+UsernameAnim.Parent = Username
+UsernameAnim.Source = [[
+local textBox = script.Parent
+textBox.Focused:Connect(function()
+    textBox:TweenSize(UDim2.new(0, 190, 0, 35), "Out", "Quad", 0.1, true)
 end)
-
--- Status Bar
-local StatusBar = Instance.new("Frame")
-StatusBar.Size = UDim2.new(1, -20, 0, 30)
-StatusBar.Position = UDim2.new(0, 10, 0, 50)
-StatusBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-StatusBar.Parent = Frame
-local StatusText = Instance.new("TextLabel")
-StatusText.Size = UDim2.new(1, -10, 1, 0)
-StatusText.BackgroundTransparency = 1
-StatusText.Text = "Ready"
-StatusText.TextColor3 = Color3.fromRGB(200, 200, 200)
-StatusText.TextSize = 14
-StatusText.TextXAlignment = Enum.TextXAlignment.Left
-StatusText.Parent = StatusBar
-local StatusCorner = Instance.new("UICorner")
-StatusCorner.CornerRadius = UDim.new(0, 5)
-StatusCorner.Parent = StatusBar
-
--- Player Dropdown
-local Dropdown = Instance.new("TextButton")
-Dropdown.Size = UDim2.new(0.9, 0, 0, 35)
-Dropdown.Position = UDim2.new(0.05, 0, 0, 90)
-Dropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Dropdown.Text = "Select Target"
-Dropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
-Dropdown.TextSize = 16
-Dropdown.Parent = Frame
-local DropCorner = Instance.new("UICorner")
-DropCorner.CornerRadius = UDim.new(0, 5)
-DropCorner.Parent = Dropdown
-local DropStroke = Instance.new("UIStroke")
-DropStroke.Color = Color3.fromRGB(255, 50, 50)
-DropStroke.Thickness = 1
-DropStroke.Parent = Dropdown
-
-local DropdownFrame = Instance.new("ScrollingFrame")
-DropdownFrame.Size = UDim2.new(0.9, 0, 0, 120)
-DropdownFrame.Position = UDim2.new(0.05, 0, 0, 130)
-DropdownFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-DropdownFrame.BorderSizePixel = 0
-DropdownFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-DropdownFrame.ScrollBarThickness = 5
-DropdownFrame.Visible = false
-DropdownFrame.Parent = Frame
-local DropFrameCorner = Instance.new("UICorner")
-DropFrameCorner.CornerRadius = UDim.new(0, 5)
-DropFrameCorner.Parent = DropdownFrame
-
-local function updateDropdown()
-    DropdownFrame:ClearAllChildren()
-    local players = {"all", "others", "random"}
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
-            table.insert(players, player.Name)
-        end
-    end
-    DropdownFrame.CanvasSize = UDim2.new(0, 0, 0, #players * 30)
-    for i, name in ipairs(players) do
-        local button = Instance.new("TextButton")
-        button.Size = UDim2.new(1, -10, 0, 25)
-        button.Position = UDim2.new(0, 5, 0, (i-1)*30)
-        button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        button.Text = name
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.TextSize = 14
-        button.Parent = DropdownFrame
-        local btnCorner = Instance.new("UICorner")
-        btnCorner.CornerRadius = UDim.new(0, 5)
-        btnCorner.Parent = button
-        button.MouseButton1Click:Connect(function()
-            Dropdown.Text = name
-            DropdownFrame.Visible = false
-            StatusText.Text = "Selected: "..name
-        end)
-        button.MouseEnter:Connect(function()
-            TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
-        end)
-        button.MouseLeave:Connect(function()
-            TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
-        end)
-    end
-end
-updateDropdown()
-game.Players.PlayerAdded:Connect(updateDropdown)
-game.Players.PlayerRemoving:Connect(updateDropdown)
-
-Dropdown.MouseButton1Click:Connect(function()
-    DropdownFrame.Visible = not DropdownFrame.Visible
-    local targetPos = DropdownFrame.Visible and UDim.new(0, 130) or UDim.new(0, 90)
-    TweenService:Create(DropdownFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Position = UDim2.new(0.05, 0, targetPos)}):Play()
+textBox.FocusLost:Connect(function()
+    textBox:TweenSize(UDim2.new(0, 183, 0, 30), "Out", "Quad", 0.1, true)
 end)
+]]
 
--- Command List
-local CommandFrame = Instance.new("ScrollingFrame")
-CommandFrame.Size = UDim2.new(0.9, 0, 0, 180)
-CommandFrame.Position = UDim2.new(0.05, 0, 0, 150)
-CommandFrame.BackgroundTransparency = 1
-CommandFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-CommandFrame.ScrollBarThickness = 5
-CommandFrame.Parent = Frame
+-- Scrolling Frame
+local ScrollingFrame = Instance.new("ScrollingFrame")
+ScrollingFrame.Active = true
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ScrollingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+ScrollingFrame.Size = UDim2.new(0, 279, 0, 254)
+ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(255, 50, 50)
+ScrollingFrame.Position = UDim2.new(0.50458, 0, 0.60286, 0)
+ScrollingFrame.ScrollBarThickness = 10
+ScrollingFrame.BackgroundTransparency = 1
+ScrollingFrame.Parent = MainFrame
 
+-- Grid Layout
+local UIGridLayout = Instance.new("UIGridLayout")
+UIGridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIGridLayout.CellSize = UDim2.new(1, -35, 0, 40)
+UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIGridLayout.CellPadding = UDim2.new(0, 5, 0, 10)
+UIGridLayout.Parent = ScrollingFrame
+
+-- SubTitle
+local SubTitle = Instance.new("TextLabel")
+SubTitle.TextWrapped = true
+SubTitle.TextSize = 18
+SubTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SubTitle.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+SubTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+SubTitle.BackgroundTransparency = 1
+SubTitle.Size = UDim2.new(0, 165, 0, 17)
+SubTitle.Text = ".gg/GHOSTPEPPER"
+SubTitle.Name = "SubTitle"
+SubTitle.Position = UDim2.new(0.22667, 0, 0.06857, 0)
+SubTitle.Parent = ScrollingFrame
+
+-- Commands
 local buttons = {
-    {Text = "Equip Delete Tool", Func = function() Commands.DeleteTool() StatusText.Text = "Delete Tool Equipped" end},
-    {Text = "Kick Player", Func = function() Commands.KickPlayer(Dropdown.Text) StatusText.Text = "Kicked "..Dropdown.Text end},
-    {Text = "Fly", Func = function() Commands.FlyPlayer() StatusText.Text = "Flight Enabled" end},
-    {Text = "Mute Player", Func = function() Commands.MutePlayer(Dropdown.Text) StatusText.Text = "Muted "..Dropdown.Text end},
-    {Text = "Teleport", Func = function() Commands.TeleportPlayer(Dropdown.Text) StatusText.Text = "Teleported to "..Dropdown.Text end},
-    {Text = "Nuke Game", Func = function() Commands.NukeGame() StatusText.Text = "Nuked Game" end}
+    {Text = "Equip Delete Tool", Func = function() Commands.DeleteTool() end},
+    {Text = "Kick", Func = function() Commands.KickPlayer(Username.Text) end},
+    {Text = "Flight", Func = function() Commands.FlyPlayer() end},
+    {Text = "Mute", Func = function() Commands.MutePlayer(Username.Text) end},
+    {Text = "Teleport", Func = function() Commands.TeleportPlayer(Username.Text) end},
+    {Text = "Nuke Game", Func = function() Commands.NukeGame() end},
+    {Text = "Kill", Func = function() Commands.KillPlayer(Username.Text) end},
+    {Text = "Server Lock", Func = function() Commands.ServerLock() end}
 }
 
-CommandFrame.CanvasSize = UDim2.new(0, 0, 0, #buttons * 45)
 for i, btn in ipairs(buttons) do
     local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, -10, 0, 35)
-    button.Position = UDim2.new(0, 5, 0, (i-1)*45)
-    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    button.Text = btn.Text
+    button.TextSize = 18
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextSize = 16
-    button.Parent = CommandFrame
-    local btnCorner = Instance.new("UICorner")
-    btnCorner.CornerRadius = UDim.new(0, 5)
-    btnCorner.Parent = button
-    local btnStroke = Instance.new("UIStroke")
-    btnStroke.Color = Color3.fromRGB(255, 50, 50)
-    btnStroke.Thickness = 1
-    btnStroke.Parent = button
-    button.MouseButton1Click:Connect(btn.Func)
-    button.MouseEnter:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
-        TweenService:Create(btnStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(255, 100, 100)}):Play()
-    end)
-    button.MouseLeave:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
-        TweenService:Create(btnStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(255, 50, 50)}):Play()
-    end)
-end
+    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    button.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+    button.BackgroundTransparency = 0.8
+    button.Text = btn.Text
+    button.Name = btn.Text:gsub(" ", "")
+    button.Parent = ScrollingFrame
 
--- Animation on load
-Frame.Position = UDim2.new(0.5, -225, 1.5, 0)
-Frame:TweenPosition(UDim2.new(0.5, -225, 0.5, -175), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+    local corner = Instance.new("UICorner")
+    corner.Parent = button
 
--- Draggable
-local dragging, dragInput, dragStart, startPos
-local function updateInput(input)
-    local delta = input.Position - dragStart
-    Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-TitleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = Frame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
+    local shadow = Instance.new("ImageLabel")
+    shadow.SliceCenter = Rect.new(200, 200, 500, 500)
+    shadow.SliceScale = 0.1
+    shadow.ScaleType = Enum.ScaleType.Slice
+    shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.ImageTransparency = 0.5
+    shadow.Image = "http://www.roblox.com/asset/?id=13960012399"
+    shadow.Size = UDim2.new(1, 18, 1, 18)
+    shadow.BackgroundTransparency = 1
+    shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+    shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+    shadow.Name = "Shadow"
+    shadow.Parent = button
+
+    local shadowGradient = Instance.new("UIGradient")
+    shadowGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
+    shadowGradient.Parent = shadow
+
+    local buttonScript = Instance.new("LocalScript")
+    buttonScript.Parent = button
+    buttonScript.Source = [[
+        local button = script.Parent
+        local tweenService = game:GetService("TweenService")
+        button.MouseButton1Click:Connect(function()
+            button:TweenSize(UDim2.new(1, -40, 0, 35), "Out", "Quad", 0.1, true)
+            wait(0.1)
+            button:TweenSize(UDim2.new(1, -35, 0, 40), "Out", "Quad", 0.1, true)
         end)
+        button.MouseEnter:Connect(function()
+            tweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
+        end)
+        button.MouseLeave:Connect(function()
+            tweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 0, 0)}):Play()
+        end)
+    ]]
+
+    button.MouseButton1Click:Connect(btn.Func)
+end
+
+-- Command Counter
+local MainHandler = Instance.new("LocalScript")
+MainHandler.Name = "MainHandler"
+MainHandler.Parent = MainFrame
+MainHandler.Source = [[
+    local commandcount = 0
+    for _, v in pairs(script.Parent.ScrollingFrame:GetChildren()) do
+        if v:IsA("TextButton") then
+            commandcount = commandcount + 1
+        end
     end
-end)
-TitleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
+    script.Parent.ScrollingFrame.SubTitle.Text = script.Parent.ScrollingFrame.SubTitle.Text.." ("..tostring(commandcount).." commands loaded!)"
+]]
+
+-- Draggable Frame
+local UIDrag = Instance.new("LocalScript")
+UIDrag.Name = "UIDrag"
+UIDrag.Parent = MainFrame
+UIDrag.Source = [[
+    local UIS = game:GetService('UserInputService')
+    local frame = script.Parent
+    local dragToggle = nil
+    local dragSpeed = 0.25
+    local dragStart = nil
+    local startPos = nil
+
+    local function updateInput(input)
+        local delta = input.Position - dragStart
+        local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        game:GetService('TweenService'):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
     end
-end)
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        updateInput(input)
-    end
-end)
+
+    frame.InputBegan:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
+            dragToggle = true
+            dragStart = input.Position
+            startPos = frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragToggle = false
+                end
+            end)
+        end
+    end)
+
+    UIS.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            if dragToggle then
+                updateInput(input)
+            end
+        end
+    end)
+]]
+
+-- Load Animation
+MainFrame.Position = UDim2.new(0.5, 0, 1.5, 0)
+TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
