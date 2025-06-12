@@ -11,11 +11,13 @@ end
 function Commands.DeleteTool()
     local tool = Instance.new("Tool")
     tool.Name = "GHOSTDeleteTool"
+    tool.RequiresHandle = false
     tool.Parent = game.Players.LocalPlayer.Backpack
     tool.Activated:Connect(function()
         local mouse = game.Players.LocalPlayer:GetMouse()
-        if mouse.Target then
-            actionbind:Fire(mouse.Target)
+        local target = mouse.Target
+        if target and target:IsA("BasePart") or target:IsA("Model") then
+            actionbind:Fire(target)
         end
     end)
 end
@@ -42,42 +44,76 @@ function Commands.KickPlayer(target)
     end
 end
 
--- FlyPlayer: Enables flight
+-- FlyPlayer: Enables smooth flight
 function Commands.FlyPlayer()
     local player = game.Players.LocalPlayer
-    local bodyvelocity = Instance.new("BodyVelocity")
-    bodyvelocity.MaxForce = Vector3.new(0, math.huge, 0)
-    bodyvelocity.Velocity = Vector3.new(0, 0, 0)
-    bodyvelocity.Parent = player.Character.HumanoidRootPart
-    local bodygyro = Instance.new("BodyGyro")
-    bodygyro.MaxTorque = Vector3.new(math.huge, 0, math.huge)
-    bodygyro.Parent = player.Character.HumanoidRootPart
-    player.Character.Humanoid.PlatformStand = true
-    game:GetService("RunService").RenderStepped:Connect(function()
-        if player.Character and player.Character.Humanoid then
-            local cam = workspace.CurrentCamera
-            local move = Vector3.new()
-            if game.UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                move = move + cam.CFrame.LookVector
-            end
-            if game.UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                move = move - cam.CFrame.LookVector
-            end
-            if game.UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                move = move - cam.CFrame.RightVector
-            end
-            if game.UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                move = move + cam.CFrame.RightVector
-            end
-            bodyvelocity.Velocity = move * 50
+    local character = player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+    local root = character.HumanoidRootPart
+    local humanoid = character.Humanoid
+
+    -- Clean up existing flight instances
+    for _, obj in ipairs(root:GetChildren()) do
+        if obj:IsA("BodyVelocity") or obj:IsA("BodyGyro") then
+            obj:Destroy()
         end
+    end
+
+    local bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+    bodyVelocity.Parent = root
+
+    local bodyGyro = Instance.new("BodyGyro")
+    bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+    bodyGyro.CFrame = root.CFrame
+    bodyGyro.Parent = root
+
+    humanoid.PlatformStand = true
+
+    local speed = 50
+    local connection
+    connection = game:GetService("RunService").RenderStepped:Connect(function()
+        if not character or not humanoid or not root.Parent then
+            connection:Disconnect()
+            return
+        end
+        local cam = workspace.CurrentCamera
+        local move = Vector3.new()
+        if game.UserInputService:IsKeyDown(Enum.KeyCode.W) then
+            move = move + cam.CFrame.LookVector
+        end
+        if game.UserInputService:IsKeyDown(Enum.KeyCode.S) then
+            move = move - cam.CFrame.LookVector
+        end
+        if game.UserInputService:IsKeyDown(Enum.KeyCode.A) then
+            move = move - cam.CFrame.RightVector
+        end
+        if game.UserInputService:IsKeyDown(Enum.KeyCode.D) then
+            move = move + cam.CFrame.RightVector
+        end
+        if game.UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+            move = move + Vector3.new(0, 1, 0)
+        end
+        if game.UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+            move = move - Vector3.new(0, 1, 0)
+        end
+        bodyVelocity.Velocity = move.Unit * speed
+        bodyGyro.CFrame = cam.CFrame
+    end)
+
+    -- Clean up on character reset
+    humanoid.Died:Connect(function()
+        connection:Disconnect()
+        humanoid.PlatformStand = false
     end)
 end
 
 -- MutePlayer: Mutes a player
 function Commands.MutePlayer(target)
     local player = game.Players:FindFirstChild(target)
-    if player then
+    if player and player.Character then
         actionbind:Fire(player.Character.Humanoid)
     end
 end
@@ -87,8 +123,14 @@ function Commands.TeleportPlayer(target)
     local player = game.Players.LocalPlayer
     if target == "random" then
         local parts = workspace:GetDescendants()
-        local randompart = parts[math.random(1, #parts)]
-        if randompart:IsA("BasePart") then
+        local randompart
+        for _, part in ipairs(parts) do
+            if part:IsA("BasePart") and part ~= player.Character.HumanoidRootPart then
+                randompart = part
+                break
+            end
+        end
+        if randompart then
             player.Character.HumanoidRootPart.CFrame = randompart.CFrame
         end
     else
@@ -108,6 +150,37 @@ function Commands.NukeGame()
             actionbind:Fire(part)
         end
     end
+end
+
+-- KillPlayer: Kills specified player(s)
+function Commands.KillPlayer(target)
+    if target == "all" then
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                actionbind:Fire(player.Character.Humanoid)
+            end
+        end
+    elseif target == "others" then
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                actionbind:Fire(player.Character.Humanoid)
+            end
+        end
+    else
+        local player = game.Players:FindFirstChild(target)
+        if player and player.Character then
+            actionbind:Fire(player.Character.Humanoid)
+        end
+    end
+end
+
+-- ServerLock: Prevents new players from joining
+function Commands.ServerLock()
+    game.Players.PlayerAdded:Connect(function(player)
+        if player ~= game.Players.LocalPlayer then
+            actionbind:Fire(player)
+        end
+    end)
 end
 
 return Commands
