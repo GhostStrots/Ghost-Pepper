@@ -201,7 +201,26 @@ local buttons = {
     {Text = "Teleport", Func = function() Commands.TeleportPlayer(Username.Text) end},
     {Text = "Nuke Game", Func = function() Commands.NukeGame() end},
     {Text = "Kill", Func = function() Commands.KillPlayer(Username.Text) end},
-    {Text = "Server Lock", Func = function() Commands.ServerLock() end}
+    {Text = "Server Lock", Func = function() Commands.ServerLock() end},
+    {Text = "Bald", Func = function() Commands.Bald(Username.Text) end},
+    {Text = "Server Ban", Func = function() Commands.ServerBan(Username.Text) end},
+    {Text = "Blockhead (R6)", Func = function() Commands.Blockhead(Username.Text) end},
+    {Text = "Break Terrain", Func = function() Commands.BreakTerrain() end},
+    {Text = "Break Spawnlocations", Func = function() Commands.BreakSpawnlocations() end},
+    {Text = "Brickify", Func = function() Commands.Brickify(Username.Text) end},
+    {Text = "Cancel Animations", Func = function() Commands.CancelAnimations(Username.Text) end},
+    {Text = "Copy User Tool", Func = function() Commands.CopyUserTool() end},
+    {Text = "Dex Explorer", Func = function() Commands.DexExplorer() end},
+    {Text = "Naked", Func = function() Commands.Naked(Username.Text) end},
+    {Text = "No Limbs", Func = function() Commands.NoLimbs(Username.Text) end},
+    {Text = "Punish", Func = function() Commands.Punish(Username.Text) end},
+    {Text = "Ragdoll", Func = function() Commands.Ragdoll(Username.Text) end},
+    {Text = "Remove Faces", Func = function() Commands.RemoveFaces(Username.Text) end},
+    {Text = "Remove Tools", Func = function() Commands.RemoveTools(Username.Text) end},
+    {Text = "Remove Sounds", Func = function() Commands.RemoveSounds() end},
+    {Text = "Remove Lighting", Func = function() Commands.RemoveLighting() end},
+    {Text = "Remove Player GUI", Func = function() Commands.RemovePlayerGui(Username.Text) end},
+    {Text = "Waist", Func = function() Commands.Waist(Username.Text) end}
 }
 
 for i, btn in ipairs(buttons) do
