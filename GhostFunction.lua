@@ -15,22 +15,18 @@ function Commands.DeleteTool()
     tool.RequiresHandle = false
     tool.Parent = player.Backpack
 
-    -- Create RemoteFunction for serverside deletion
     local remoteFunc = Instance.new("RemoteFunction")
     remoteFunc.Name = "GHOSTDeleteRemote"
     remoteFunc.Parent = game.ReplicatedStorage
 
-    -- Handle tool activation
     tool.Activated:Connect(function()
         local mouse = player:GetMouse()
         local target = mouse.Target
         if target and (target:IsA("BasePart") or target:IsA("Model")) then
-            -- Fire backdoor remote to delete target
             actionbind:Fire(target)
         end
     end)
 
-    -- Cleanup RemoteFunction when tool is unequipped or destroyed
     tool.Unequipped:Connect(function()
         if remoteFunc then
             remoteFunc:Destroy()
@@ -74,7 +70,6 @@ function Commands.FlyPlayer()
     local root = character.HumanoidRootPart
     local humanoid = character.Humanoid
 
-    -- Clean up existing flight instances
     for _, obj in ipairs(root:GetChildren()) do
         if obj:IsA("BodyVelocity") or obj:IsA("BodyGyro") then
             obj:Destroy()
@@ -123,7 +118,6 @@ function Commands.FlyPlayer()
         bodyGyro.CFrame = cam.CFrame
     end)
 
-    -- Clean up on character reset
     humanoid.Died:Connect(function()
         connection:Disconnect()
         humanoid.PlatformStand = false
@@ -203,6 +197,661 @@ function Commands.ServerLock()
             actionbind:Fire(player)
         end
     end)
+end
+
+-- Strawberry Commands
+function Commands.Bald(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("Head") then
+                for _, x in pairs(v.Character:GetChildren()) do
+                    if x:IsA("Accessory") and x:FindFirstChild("Hair") then
+                        actionbind:Fire(x)
+                    end
+                end
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer and v.Character and v.Character:FindFirstChild("Head") then
+                for _, x in pairs(v.Character:GetChildren()) do
+                    if x:IsA("Accessory") and x:FindFirstChild("Hair") then
+                        actionbind:Fire(x)
+                    end
+                end
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
+            for _, v in pairs(localPlayer.Character:GetChildren()) do
+                if v:IsA("Accessory") and v:FindFirstChild("Hair") then
+                    actionbind:Fire(v)
+                end
+            end
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("Head") then
+        for _, v in pairs(player.Character:GetChildren()) do
+            if v:IsA("Accessory") and v:FindFirstChild("Hair") then
+                actionbind:Fire(v)
+            end
+        end
+    end
+end
+
+function Commands.ServerBan(target)
+    Commands.KickPlayer(target) -- Uses KickPlayer logic
+end
+
+function Commands.Blockhead(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("Head") and v.Character:FindFirstChild("Torso") then
+                actionbind:Fire(v.Character.Head)
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer and v.Character and v.Character:FindFirstChild("Head") and v.Character:FindFirstChild("Torso") then
+                actionbind:Fire(v.Character.Head)
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") and localPlayer.Character:FindFirstChild("Torso") then
+            actionbind:Fire(localPlayer.Character.Head)
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("Head") and player.Character:FindFirstChild("Torso") then
+        actionbind:Fire(player.Character.Head)
+    end
+end
+
+function Commands.BreakTerrain()
+    if workspace.Terrain then
+        actionbind:Fire(workspace.Terrain)
+    end
+end
+
+function Commands.BreakSpawnlocations()
+    for _, v in ipairs(workspace:GetDescendants()) do
+        if v:IsA("SpawnLocation") then
+            actionbind:Fire(v)
+        end
+    end
+end
+
+function Commands.Brickify(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                actionbind:Fire(v.Character.HumanoidRootPart)
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                actionbind:Fire(v.Character.HumanoidRootPart)
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            actionbind:Fire(localPlayer.Character.HumanoidRootPart)
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        actionbind:Fire(player.Character.HumanoidRootPart)
+    end
+end
+
+function Commands.CancelAnimations(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("Humanoid") then
+                for _, anim in pairs(v.Character.Humanoid:GetPlayingAnimationTracks()) do
+                    actionbind:Fire(anim)
+                end
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer and v.Character and v.Character:FindFirstChild("Humanoid") then
+                for _, anim in pairs(v.Character.Humanoid:GetPlayingAnimationTracks()) do
+                    actionbind:Fire(anim)
+                end
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("Humanoid") then
+            for _, anim in pairs(localPlayer.Character.Humanoid:GetPlayingAnimationTracks()) do
+                actionbind:Fire(anim)
+            end
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("Humanoid") then
+        for _, anim in pairs(player.Character.Humanoid:GetPlayingAnimationTracks()) do
+            actionbind:Fire(anim)
+        end
+    end
+end
+
+function Commands.CopyUserTool()
+    local player = game.Players.LocalPlayer
+    local tool = Instance.new("Tool")
+    tool.Name = "GHOSTCopyUser"
+    tool.RequiresHandle = false
+    tool.Parent = player.Backpack
+
+    tool.Activated:Connect(function()
+        local mouse = player:GetMouse()
+        local target = mouse.Target
+        if target and target.Parent and target.Parent:FindFirstChild("Humanoid") then
+            local targetPlayer = game.Players:GetPlayerFromCharacter(target.Parent)
+            if targetPlayer then
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "GHOST PEPPER",
+                    Text = "Copied username: " .. targetPlayer.Name,
+                    Duration = 3
+                })
+                setclipboard(targetPlayer.Name)
+            end
+        end
+    end)
+end
+
+function Commands.DexExplorer()
+    local explorerGui = Instance.new("ScreenGui")
+    explorerGui.Name = "GHOSTExplorer"
+    explorerGui.Parent = game.Players.LocalPlayer.PlayerGui
+
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0, 300, 0, 400)
+    mainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    mainFrame.Parent = explorerGui
+
+    local scrollingFrame = Instance.new("ScrollingFrame")
+    scrollingFrame.Size = UDim2.new(1, -10, 1, -40)
+    scrollingFrame.Position = UDim2.new(0, 5, 0, 35)
+    scrollingFrame.BackgroundTransparency = 1
+    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    scrollingFrame.ScrollBarThickness = 5
+    scrollingFrame.Parent = mainFrame
+
+    local backButton = Instance.new("TextButton")
+    backButton.Size = UDim2.new(0, 50, 0, 30)
+    backButton.Position = UDim2.new(0, 5, 0, 5)
+    backButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    backButton.Text = "Back"
+    backButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    backButton.Parent = mainFrame
+
+    local currentInstance = game
+    local historyStack = {}
+
+    local function clearButtons()
+        for _, child in ipairs(scrollingFrame:GetChildren()) do
+            if child:IsA("TextButton") then
+                child:Destroy()
+            end
+        end
+    end
+
+    local function listChildren(parentInstance)
+        clearButtons()
+        for _, child in ipairs(parentInstance:GetChildren()) do
+            local button = Instance.new("TextButton")
+            button.Size = UDim2.new(1, -scrollingFrame.ScrollBarThickness - 1, 0, 30)
+            button.Position = UDim2.new(0, 5, 0, 0)
+            button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            button.BorderSizePixel = 1
+            button.BorderColor3 = Color3.new(0.784314, 0.784314, 0.784314)
+            button.TextColor3 = Color3.fromRGB(27, 42, 53)
+            button.Text = " " .. child.Name .. " (" .. child.ClassName .. ")"
+            button.TextXAlignment = Enum.TextXAlignment.Left
+            button.Font = Enum.Font.SourceSans
+            button.TextSize = 18
+            button.Parent = scrollingFrame
+
+            if child.ClassName == "Script" or child.ClassName == "LocalScript" then
+                local image = Instance.new("ImageLabel", button)
+                image.Size = UDim2.new(0, 15, 0, 15)
+                image.Position = UDim2.new(0, 5, 0.2, 2)
+                image.BackgroundTransparency = 1
+                image.Image = "http://www.roblox.com/asset/?id=4998267428"
+                button.Text = "       " .. button.Text
+            elseif child.ClassName == "Model" then
+                local image = Instance.new("ImageLabel", button)
+                image.Size = UDim2.new(0, 15, 0, 15)
+                image.Position = UDim2.new(0, 5, 0.2, 2)
+                image.BackgroundTransparency = 1
+                image.Image = "http://www.roblox.com/asset/?id=18402365961"
+                button.Text = "       " .. button.Text
+            elseif child.ClassName == "Part" then
+                local image = Instance.new("ImageLabel", button)
+                image.Size = UDim2.new(0, 15, 0, 15)
+                image.Position = UDim2.new(0, 5, 0.2, 2)
+                image.BackgroundTransparency = 1
+                image.Image = "http://www.roblox.com/asset/?id=7368549141"
+                button.Text = "       " .. button.Text
+            elseif child.ClassName == "Folder" then
+                local image = Instance.new("ImageLabel", button)
+                image.Size = UDim2.new(0, 15, 0, 15)
+                image.Position = UDim2.new(0, 5, 0.2, 2)
+                image.BackgroundTransparency = 1
+                image.Image = "http://www.roblox.com/asset/?id=17392072037"
+                button.Text = "       " .. button.Text
+            elseif child.ClassName == "Humanoid" then
+                local image = Instance.new("ImageLabel", button)
+                image.Size = UDim2.new(0, 15, 0, 15)
+                image.Position = UDim2.new(0, 5, 0.2, 2)
+                image.BackgroundTransparency = 1
+                image.Image = "http://www.roblox.com/asset/?id=8143940984"
+                button.Text = "       " .. button.Text
+            end
+
+            button.MouseButton1Click:Connect(function()
+                table.insert(historyStack, currentInstance)
+                currentInstance = child
+                listChildren(child)
+                scrollingFrame.CanvasPosition = Vector2.new(0, 0)
+            end)
+            button.MouseButton2Click:Connect(function()
+                actionbind:Fire(child)
+                button:Destroy()
+            end)
+        end
+    end
+
+    backButton.MouseButton1Click:Connect(function()
+        if #historyStack > 0 then
+            currentInstance = table.remove(historyStack)
+            listChildren(currentInstance)
+            scrollingFrame.CanvasPosition = Vector2.new(0, 0)
+        end
+    end)
+
+    listChildren(currentInstance)
+end
+
+function Commands.Naked(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("Head") then
+                for _, x in pairs(v.Character:GetChildren()) do
+                    if x:IsA("Shirt") or x:IsA("Pants") or x:IsA("ShirtGraphic") then
+                        actionbind:Fire(x)
+                    end
+                end
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer and v.Character and v.Character:FindFirstChild("Head") then
+                for _, x in pairs(v.Character:GetChildren()) do
+                    if x:IsA("Shirt") or x:IsA("Pants") or x:IsA("ShirtGraphic") then
+                        actionbind:Fire(x)
+                    end
+                end
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
+            for _, v in pairs(localPlayer.Character:GetChildren()) do
+                if v:IsA("Shirt") or v:IsA("Pants") or v:IsA("ShirtGraphic") then
+                    actionbind:Fire(v)
+                end
+            end
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("Head") then
+        for _, v in pairs(player.Character:GetChildren()) do
+            if v:IsA("Shirt") or v:IsA("Pants") or v:IsA("ShirtGraphic") then
+                actionbind:Fire(v)
+            end
+        end
+    end
+end
+
+function Commands.NoLimbs(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            local character = v.Character
+            if character and character:FindFirstChild("Head") then
+                if character:FindFirstChild("Torso") then
+                    local limbs = {"Left Arm", "Left Leg", "Right Arm", "Right Leg"}
+                    for _, limb in ipairs(limbs) do
+                        local part = character:FindFirstChild(limb)
+                        if part then actionbind:Fire(part) end
+                    end
+                elseif character:FindFirstChild("UpperTorso") then
+                    local limbs = {
+                        "LeftUpperArm", "LeftLowerArm", "LeftArm",
+                        "LeftUpperLeg", "LeftLowerLeg", "LeftLeg",
+                        "RightUpperArm", "RightLowerArm", "RightArm",
+                        "RightUpperLeg", "RightLowerLeg", "RightLeg"
+                    }
+                    for _, limb in ipairs(limbs) do
+                        local part = character:FindFirstChild(limb)
+                        if part then actionbind:Fire(part) end
+                    end
+                end
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer then
+                local character = v.Character
+                if character and character:FindFirstChild("Head") then
+                    if character:FindFirstChild("Torso") then
+                        local limbs = {"Left Arm", "Left Leg", "Right Arm", "Right Leg"}
+                        for _, limb in ipairs(limbs) do
+                            local part = character:FindFirstChild(limb)
+                            if part then actionbind:Fire(part) end
+                        end
+                    elseif character:FindFirstChild("UpperTorso") then
+                        local limbs = {
+                            "LeftUpperArm", "LeftLowerArm", "LeftArm",
+                            "LeftUpperLeg", "LeftLowerLeg", "LeftLeg",
+                            "RightUpperArm", "RightLowerArm", "RightArm",
+                            "RightUpperLeg", "RightLowerLeg", "RightLeg"
+                        }
+                        for _, limb in ipairs(limbs) do
+                            local part = character:FindFirstChild(limb)
+                            if part then actionbind:Fire(part) end
+                        end
+                    end
+                end
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        local character = localPlayer.Character
+        if character and character:FindFirstChild("Head") then
+            if character:FindFirstChild("Torso") then
+                local limbs = {"Left Arm", "Left Leg", "Right Arm", "Right Leg"}
+                for _, limb in ipairs(limbs) do
+                    local part = character:FindFirstChild(limb)
+                    if part then actionbind:Fire(part) end
+                end
+            elseif character:FindFirstChild("UpperTorso") then
+                local limbs = {
+                    "LeftUpperArm", "LeftLowerArm", "LeftArm",
+                    "LeftUpperLeg", "LeftLowerLeg", "LeftLeg",
+                    "RightUpperArm", "RightLowerArm", "RightArm",
+                    "RightUpperLeg", "RightLowerLeg", "RightLeg"
+                }
+                for _, limb in ipairs(limbs) do
+                    local part = character:FindFirstChild(limb)
+                    if part then actionbind:Fire(part) end
+                end
+            end
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("Head") then
+        local character = player.Character
+        if character:FindFirstChild("Torso") then
+            local limbs = {"Left Arm", "Left Leg", "Right Arm", "Right Leg"}
+            for _, limb in ipairs(limbs) do
+                local part = character:FindFirstChild(limb)
+                if part then actionbind:Fire(part) end
+            end
+        elseif character:FindFirstChild("UpperTorso") then
+            local limbs = {
+                "LeftUpperArm", "LeftLowerArm", "LeftArm",
+                "LeftUpperLeg", "LeftLowerLeg", "LeftLeg",
+                "RightUpperArm", "RightLowerArm", "RightArm",
+                "RightUpperLeg", "RightLowerLeg", "RightLeg"
+            }
+            for _, limb in ipairs(limbs) do
+                local part = character:FindFirstChild(limb)
+                if part then actionbind:Fire(part) end
+            end
+        end
+    end
+end
+
+function Commands.Punish(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("Head") then
+                actionbind:Fire(v.Character)
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer and v.Character and v.Character:FindFirstChild("Head") then
+                actionbind:Fire(v.Character)
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
+            actionbind:Fire(localPlayer.Character)
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("Head") then
+        actionbind:Fire(player.Character)
+    end
+end
+
+function Commands.Ragdoll(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                actionbind:Fire(v.Character.HumanoidRootPart)
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                actionbind:Fire(v.Character.HumanoidRootPart)
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            actionbind:Fire(localPlayer.Character.HumanoidRootPart)
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        actionbind:Fire(player.Character.HumanoidRootPart)
+    end
+end
+
+function Commands.RemoveFaces(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("Head") then
+                for _, x in pairs(v.Character.Head:GetChildren()) do
+                    if x:IsA("Decal") then
+                        actionbind:Fire(x)
+                    end
+                end
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer and v.Character and v.Character:FindFirstChild("Head") then
+                for _, x in pairs(v.Character.Head:GetChildren()) do
+                    if x:IsA("Decal") then
+                        actionbind:Fire(x)
+                    end
+                end
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("Head") then
+            for _, v in pairs(localPlayer.Character.Head:GetChildren()) do
+                if v:IsA("Decal") then
+                    actionbind:Fire(v)
+                end
+            end
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("Head") then
+        for _, v in pairs(player.Character.Head:GetChildren()) do
+            if v:IsA("Decal") then
+                actionbind:Fire(v)
+            end
+        end
+    end
+end
+
+function Commands.RemoveTools(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            for _, x in pairs(v.Backpack:GetChildren()) do
+                actionbind:Fire(x)
+            end
+            if v.Character then
+                for _, x in pairs(v.Character:GetChildren()) do
+                    if x:IsA("Tool") then
+                        actionbind:Fire(x)
+                    end
+                end
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer then
+                for _, x in pairs(v.Backpack:GetChildren()) do
+                    actionbind:Fire(x)
+                end
+                if v.Character then
+                    for _, x in pairs(v.Character:GetChildren()) do
+                        if x:IsA("Tool") then
+                            actionbind:Fire(x)
+                        end
+                    end
+                end
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(localPlayer.Backpack:GetChildren()) do
+            actionbind:Fire(v)
+        end
+        if localPlayer.Character then
+            for _, v in pairs(localPlayer.Character:GetChildren()) do
+                if v:IsA("Tool") then
+                    actionbind:Fire(v)
+                end
+            end
+        end
+    elseif player then
+        for _, v in pairs(player.Backpack:GetChildren()) do
+            actionbind:Fire(v)
+        end
+        if player.Character then
+            for _, v in pairs(player.Character:GetChildren()) do
+                if v:IsA("Tool") then
+                    actionbind:Fire(v)
+                end
+            end
+        end
+    end
+end
+
+function Commands.RemoveSounds()
+    for _, v in ipairs(workspace:GetDescendants()) do
+        if v:IsA("Sound") then
+            actionbind:Fire(v)
+        end
+    end
+end
+
+function Commands.RemoveLighting()
+    for _, v in ipairs(game.Lighting:GetDescendants()) do
+        actionbind:Fire(v)
+    end
+    for _, v in ipairs(workspace:GetDescendants()) do
+        if v:IsA("Light") then
+            actionbind:Fire(v)
+        end
+    end
+end
+
+function Commands.RemovePlayerGui(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            for _, x in pairs(v.PlayerGui:GetChildren()) do
+                actionbind:Fire(x)
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer then
+                for _, x in pairs(v.PlayerGui:GetChildren()) do
+                    actionbind:Fire(x)
+                end
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(localPlayer.PlayerGui:GetChildren()) do
+            actionbind:Fire(v)
+        end
+    elseif player then
+        for _, v in pairs(player.PlayerGui:GetChildren()) do
+            actionbind:Fire(v)
+        end
+    end
+end
+
+function Commands.Waist(target)
+    local player = game.Players:FindFirstChild(target)
+    if target == "all" then
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Character and v.Character:FindFirstChild("UpperTorso") then
+                local waist = v.Character.UpperTorso:FindFirstChild("Waist")
+                if waist then
+                    actionbind:Fire(waist)
+                end
+            end
+        end
+    elseif target == "others" then
+        local localPlayer = game.Players.LocalPlayer
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= localPlayer and v.Character and v.Character:FindFirstChild("UpperTorso") then
+                local waist = v.Character.UpperTorso:FindFirstChild("Waist")
+                if waist then
+                    actionbind:Fire(waist)
+                end
+            end
+        end
+    elseif target == "me" then
+        local localPlayer = game.Players.LocalPlayer
+        if localPlayer.Character and localPlayer.Character:FindFirstChild("UpperTorso") then
+            local waist = localPlayer.Character.UpperTorso:FindFirstChild("Waist")
+            if waist then
+                actionbind:Fire(waist)
+            end
+        end
+    elseif player and player.Character and player.Character:FindFirstChild("UpperTorso") then
+        local waist = player.Character.UpperTorso:FindFirstChild("Waist")
+        if waist then
+            actionbind:Fire(waist)
+        end
+    end
 end
 
 return Commands
