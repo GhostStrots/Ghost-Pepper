@@ -193,6 +193,7 @@ SubTitle.Position = UDim2.new(0.22667, 0, 0.06857, 0)
 SubTitle.Parent = ScrollingFrame
 
 -- Commands
+local serverLockButton = nil
 local buttons = {
     {Text = "Equip Delete Tool", Func = function() Commands.DeleteTool() end},
     {Text = "Kick", Func = function() Commands.KickPlayer(Username.Text) end},
@@ -201,7 +202,11 @@ local buttons = {
     {Text = "Teleport", Func = function() Commands.TeleportPlayer(Username.Text) end},
     {Text = "Nuke Game", Func = function() Commands.NukeGame() end},
     {Text = "Kill", Func = function() Commands.KillPlayer(Username.Text) end},
-    {Text = "Server Lock", Func = function() Commands.ServerLock() end},
+    {Text = "Server Lock", Func = function()
+        local isLocked = Commands.ServerLock()
+        serverLockButton.BackgroundColor3 = isLocked and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+        serverLockButton.Text = "Server Lock: " .. (isLocked and "On" or "Off")
+    end},
     {Text = "Bald", Func = function() Commands.Bald(Username.Text) end},
     {Text = "Server Ban", Func = function() Commands.ServerBan(Username.Text) end},
     {Text = "Blockhead (R6)", Func = function() Commands.Blockhead(Username.Text) end},
@@ -227,12 +232,16 @@ for i, btn in ipairs(buttons) do
     local button = Instance.new("TextButton")
     button.TextSize = 18
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    button.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+    button.BackgroundColor3 = btn.Text == "Server Lock" and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(0, 0, 0)
     button.BackgroundTransparency = 0.8
-    button.Text = btn.Text
+    button.FontFace = Font.new("rbxassetid://16658221428", Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+    button.Text = btn.Text == "Server Lock" and "Server Lock: Off" or btn.Text
     button.Name = btn.Text:gsub(" ", "")
     button.Parent = ScrollingFrame
+
+    if btn.Text == "Server Lock" then
+        serverLockButton = button
+    end
 
     local corner = Instance.new("UICorner")
     corner.Parent = button
@@ -266,10 +275,10 @@ for i, btn in ipairs(buttons) do
             button:TweenSize(UDim2.new(1, -35, 0, 40), "Out", "Quad", 0.1, true)
         end)
         button.MouseEnter:Connect(function()
-            tweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
+            tweenService:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.6}):Play()
         end)
         button.MouseLeave:Connect(function()
-            tweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 0, 0)}):Play()
+            tweenService:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.8}):Play()
         end)
     ]]
 
@@ -295,37 +304,31 @@ local UIDrag = Instance.new("LocalScript")
 UIDrag.Name = "UIDrag"
 UIDrag.Parent = MainFrame
 UIDrag.Source = [[
-    local UIS = game:GetService('UserInputService')
     local frame = script.Parent
-    local dragToggle = nil
-    local dragSpeed = 0.25
-    local dragStart = nil
-    local startPos = nil
-
-    local function updateInput(input)
-        local delta = input.Position - dragStart
-        local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        game:GetService('TweenService'):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
-    end
+    local dragging = false
+    local dragStartPos = nil
+    local frameStartPos = nil
 
     frame.InputBegan:Connect(function(input)
-        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
-            dragToggle = true
-            dragStart = input.Position
-            startPos = frame.Position
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStartPos = input.Position
+            frameStartPos = frame.Position
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
-                    dragToggle = false
+                    dragging = false
                 end
             end)
         end
     end)
 
-    UIS.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            if dragToggle then
-                updateInput(input)
-            end
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStartPos
+            frame.Position = UDim2.new(
+                frameStartPos.X.Scale, frameStartPos.X.Offset + delta.X,
+                frameStartPos.Y.Scale, frameStartPos.Y.Offset + delta.Y
+            )
         end
     end)
 ]]
