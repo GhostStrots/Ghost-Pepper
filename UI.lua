@@ -73,6 +73,50 @@ local FrameGradient = Instance.new("UIGradient")
 FrameGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 50)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 50, 50))}
 FrameGradient.Parent = MainFrame
 
+-- Drag Bar
+local DragBar = Instance.new("Frame")
+DragBar.Name = "DragBar"
+DragBar.Size = UDim2.new(1, 0, 0, 30)
+DragBar.Position = UDim2.new(0, 0, 0, 0)
+DragBar.BackgroundTransparency = 1
+DragBar.Parent = MainFrame
+
+-- Dragging Script
+local DragScript = Instance.new("LocalScript")
+DragScript.Parent = DragBar
+DragScript.Source = [[
+local UserInputService = game:GetService("UserInputService")
+local MainFrame = script.Parent.Parent
+local dragging = false
+local startPos
+local startMousePos
+
+script.Parent.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        startPos = MainFrame.Position
+        startMousePos = Vector2.new(input.Position.X, input.Position.Y)
+    end
+end)
+
+script.Parent.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local currentMousePos = Vector2.new(input.Position.X, input.Position.Y)
+        local delta = currentMousePos - startMousePos
+        local screenSize = game.Workspace.CurrentCamera.ViewportSize
+        local deltaX = delta.X / screenSize.X
+        local deltaY = delta.Y / screenSize.Y
+        MainFrame.Position = UDim2.new(startPos.X.Scale + deltaX, startPos.X.Offset, startPos.Y.Scale + deltaY, startPos.Y.Offset)
+    end
+end)
+]]
+
 -- Title
 local Title = Instance.new("TextLabel")
 Title.TextWrapped = true
@@ -113,7 +157,7 @@ UsernameBG.Parent = Username
 
 -- Username Shadow
 local UsernameShadow = Instance.new("ImageLabel")
-UsernameShadow.SliceCenter = Rect.new(200, 200, 500, 500)
+UsernameShadow.SliceCenter = Rect.new(200,  mian200, 500, 500)
 UsernameShadow.SliceScale = 0.1
 UsernameShadow.ScaleType = Enum.ScaleType.Slice
 UsernameShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -170,7 +214,7 @@ ScrollingFrame.BackgroundTransparency = 1
 ScrollingFrame.Parent = MainFrame
 
 -- Grid Layout
-local UIGridLayout = Instance.new("UIGridLayout") -- Fixed: Changed from UIGradient to UIGridLayout
+local UIGridLayout = Instance.new("UIGridLayout")
 UIGridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 UIGridLayout.CellSize = UDim2.new(1, -35, 0, 40)
 UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -297,59 +341,6 @@ MainHandler.Source = [[
         end
     end
     script.Parent.ScrollingFrame.SubTitle.Text = script.Parent.ScrollingFrame.SubTitle.Text.." ("..tostring(commandcount).." commands loaded!)"
-]]
-
--- Drag Bar
-local DragBar = Instance.new("Frame")
-DragBar.Name = "DragBar"
-DragBar.Size = UDim2.new(1, 0, 0, 30)
-DragBar.Position = UDim2.new(0, 0, 0, 0)
-DragBar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-DragBar.BackgroundTransparency = 0.5
-DragBar.Parent = MainFrame
-
-local DragBarCorner = Instance.new("UICorner")
-DragBarCorner.CornerRadius = UDim.new(0, 10)
-DragBarCorner.Parent = DragBar
-
--- Draggable Script
-local DragScript = Instance.new("LocalScript")
-DragScript.Name = "DragScript"
-DragScript.Parent = DragBar
-DragScript.Source = [[
-    local dragBar = script.Parent
-    local frame = dragBar.Parent
-    local UserInputService = game:GetService("UserInputService")
-    
-    local dragging = false
-    local dragStart = nil
-    local startPos = nil
-    
-    dragBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = frame.Position
-        end
-    end)
-    
-    dragBar.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = false
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - dragStart
-            frame.Position = UDim2.new(
-                startPos.X.Scale,
-                startPos.X.Offset + delta.X,
-                startPos.Y.Scale,
-                startPos.Y.Offset + delta.Y
-            )
-        end
-    end)
 ]]
 
 -- Load Animation
