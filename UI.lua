@@ -176,7 +176,7 @@ UIGridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 UIGridLayout.CellSize = UDim2.new(1, -35, 0, 40)
 UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIGridLayout.CellPadding = UDim2.new(0, 5, 0, 10)
-UIGridLayout.Parent = ScrollingFrame
+UIGradient.Parent = ScrollingFrame
 
 -- SubTitle
 local SubTitle = Instance.new("TextLabel")
@@ -299,25 +299,27 @@ MainHandler.Source = [[
     script.Parent.ScrollingFrame.SubTitle.Text = script.Parent.ScrollingFrame.SubTitle.Text.." ("..tostring(commandcount).." commands loaded!)"
 ]]
 
--- Draggable Frame
+-- Draggable Frame (Adapted from Strawberry)
 local UIDrag = Instance.new("LocalScript")
 UIDrag.Name = "UIDrag"
 UIDrag.Parent = MainFrame
 UIDrag.Source = [[
+    local UIS = game:GetService('UserInputService')
     local frame = script.Parent
     local dragToggle = nil
-    local dragSpeed = 0.1
+    local dragSpeed = 0.25
     local dragStart = nil
     local startPos = nil
 
     local function updateInput(input)
         local delta = input.Position - dragStart
-        local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        game:GetService("TweenService"):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
+        local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        game:GetService('TweenService'):Create(frame, TweenInfo.new(dragSpeed), {Position = position}):Play()
     end
 
     frame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
             dragToggle = true
             dragStart = input.Position
             startPos = frame.Position
@@ -329,7 +331,7 @@ UIDrag.Source = [[
         end
     end)
 
-    frame.InputChanged:Connect(function(input)
+    UIS.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             if dragToggle then
                 updateInput(input)
